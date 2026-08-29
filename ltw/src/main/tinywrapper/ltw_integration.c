@@ -3,7 +3,7 @@
  * Copyright (c) 2025 ltw-lite contributors. Under LGPL-3.0 (matches LTW).
  */
 
-#include "es3_functions.h"
+#include "proc.h"
 #include "gl_adapt.h"
 #include <stdlib.h>
 #include <string.h>
