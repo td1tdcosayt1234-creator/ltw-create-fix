@@ -6,7 +6,6 @@
 
 #include "unordered_map/unordered_map.h"
 #include "vgpu_shaderconv/shaderconv.h"
-#include "glsl_optimizer/src/code/c_wrapper.h"
 #include <GLES3/gl3.h>
 #include <string.h>
 #include "string_utils.h"
@@ -174,11 +173,12 @@ void glShaderSource(GLuint shader, GLsizei count, const GLchar *const*string, co
     target_string[target_length] = 0;
 
 #undef SRC_LEN
-    /* ltw-lite: rewrite desktop GLSL -> GLSL ES 3.00 BEFORE the optimizer.
-     * Fixes Create shader compile errors and emulates GL_EXT_clip_cull_distance. */
+    /* ltw-lite: rewrite desktop GLSL -> GLSL ES 3.00. This replaces the
+     * glsl_optimizer pass (optimize_shader); our translator already emits
+     * valid GLSL ES 3.00, which fixes Create shader compile errors and
+     * emulates GL_EXT_clip_cull_distance. */
     char *translated_source = ltw_translate_shader(target_string, shader_info->shader_type);
-    GLchar* new_source = optimize_shader(translated_source, shader_info->shader_type, 460, current_context->shader_version);
-    free(translated_source);
+    GLchar* new_source = (GLchar*)translated_source;
     //printf("\n\n\nShader Result\n%s\n\n\n", new_source);
     if(shader_info->source != NULL) free((void*)shader_info->source);
     shader_info->source = new_source;
