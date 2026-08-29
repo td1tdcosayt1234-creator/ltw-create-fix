@@ -411,4 +411,8 @@ LOCAL_SRC_FILES := \
     unordered_map/int_hash.c
 LOCAL_STATIC_LIBRARIES := glsl_optimizer
 LOCAL_LDLIBS := -llog -lEGL
+# ltw is a C module but links the C++ glsl_optimizer static lib, so force the
+# C++ runtime to be linked in.
+LOCAL_LDFLAGS := -lc++_static
+LOCAL_CPP_FEATURES := rtti exceptions
 include $(BUILD_SHARED_LIBRARY)
