@@ -1,0 +1,40 @@
+name: Android CI
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew :ltw:assembleRelease
+    - name: Upload AAR
+      uses: actions/upload-artifact@v4.6.0
+      if: startsWith(github.ref, 'refs/tags/') != true
+      with:
+         name: output-aar
+         path: ltw/build/outputs/aar/ltw-release.aar
+         if-no-files-found: error
+         retention-days: 7
+    - name: Set short SHA for release tag
+      id: short_sha
+      run: echo "short_sha=$(echo '${{ github.sha }}' | cut -c1-7)" >> $GITHUB_ENV
+    - name: Create Release
+      uses: ncipollo/release-action@v1.16.0
+      with: 
+        commit: ${{ github.sha }}
+        tag: ${{ env.short_sha }}
+        artifacts: ltw/build/outputs/aar/ltw-release.aar
+       

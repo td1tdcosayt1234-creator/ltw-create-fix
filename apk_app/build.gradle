@@ -1,0 +1,24 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'net.kdt.ltwlite'
+    compileSdk 33
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+        // libltw.so is built by ndk-build (see .github/workflows/build-apk.yml)
+        // and copied into src/main/jniLibs/<abi>/ before this task runs.
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+}
